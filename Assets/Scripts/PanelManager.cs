@@ -10,9 +10,14 @@ public class PanelManager : MonoBehaviour {
 	float height;
 
 	void Start(){
+		//Variables 
 		height = ChatPanel.GetComponent<RectTransform> ().rect.height;
+
+		//Activity
 		ChatPanel.SetActive (true);
 		LoginPanel.SetActive (true);
+
+		//Setting up Scene
 		ChatPanel.transform.position += new Vector3 (0f, height, 0f);
 	}
 
@@ -25,7 +30,6 @@ public class PanelManager : MonoBehaviour {
 
 	IEnumerator logInAsCoroutine(){
 		while (Vector3.Distance (Vector3.zero, ChatPanel.GetComponent<RectTransform>().localPosition) > 0.1f) {
-			Debug.Log (ChatPanel.GetComponent<RectTransform> ().localPosition);
 			ChatPanel.transform.position -= new Vector3 (0f, height/80, 0f);
 			LoginPanel.transform.position -= new Vector3 (0f, height/80, 0f);
 			yield return new WaitForEndOfFrame ();

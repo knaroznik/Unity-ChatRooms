@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ChatText : MonoBehaviour {
 
-	private string chat;
+	string chat;
 
 	public void AddToChat(string addOn){
 		chat += addOn;
