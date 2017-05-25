@@ -1,24 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PanelManager : MonoBehaviour {
 
-	public GameObject ChatPanel;
-	public GameObject LoginPanel;
+	[SerializeField] private GameObject i_chatPanel;
+	[SerializeField] private GameObject i_loginPanel;
 
-	float height;
+	float p_height;
 
 	void Start(){
+		
 		//Variables 
-		height = ChatPanel.GetComponent<RectTransform> ().rect.height;
+		p_height = i_chatPanel.GetComponent<RectTransform> ().rect.height;
 
 		//Activity
-		ChatPanel.SetActive (true);
-		LoginPanel.SetActive (true);
+		i_chatPanel.SetActive (true);
+		i_loginPanel.SetActive (true);
 
 		//Setting up Scene
-		ChatPanel.transform.position += new Vector3 (0f, height, 0f);
+		i_chatPanel.transform.position += new Vector3 (0f, p_height, 0f);
 	}
 
 	public void LogIn(string input){
@@ -29,9 +31,9 @@ public class PanelManager : MonoBehaviour {
 	}
 
 	IEnumerator logInAsCoroutine(){
-		while (Vector3.Distance (Vector3.zero, ChatPanel.GetComponent<RectTransform>().localPosition) > 0.1f) {
-			ChatPanel.transform.position -= new Vector3 (0f, height/80, 0f);
-			LoginPanel.transform.position -= new Vector3 (0f, height/80, 0f);
+		while (Vector3.Distance (Vector3.zero, i_chatPanel.GetComponent<RectTransform>().localPosition) > 0.1f) {
+			i_chatPanel.transform.position -= new Vector3 (0f, p_height/80, 0f);
+			i_loginPanel.transform.position -= new Vector3 (0f, p_height/80, 0f);
 			yield return new WaitForEndOfFrame ();
 		}
 	}
@@ -41,10 +43,14 @@ public class PanelManager : MonoBehaviour {
 	}
 
 	IEnumerator logOutAsCoroutine(){
-		while (Vector3.Distance (Vector3.zero, LoginPanel.GetComponent<RectTransform>().localPosition) > 0.1f) {
-			ChatPanel.transform.position += new Vector3 (0f, height/80, 0f);
-			LoginPanel.transform.position += new Vector3 (0f, height/80, 0f);
+		while (Vector3.Distance (Vector3.zero, i_loginPanel.GetComponent<RectTransform>().localPosition) > 0.1f) {
+			i_chatPanel.transform.position += new Vector3 (0f, p_height/80, 0f);
+			i_loginPanel.transform.position += new Vector3 (0f, p_height/80, 0f);
 			yield return new WaitForEndOfFrame ();
 		}
+	}
+
+	public void Navigate_ToMainPage(){
+		SceneManager.LoadScene ("mainNetwork");
 	}
 }
