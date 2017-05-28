@@ -6,7 +6,7 @@ using UnityEngine.Networking.Match;
 
 public class LobbyCenter : MonoBehaviour {
 
-	#region Variables and Start() : 
+	#region Variables and class Functions : 
 
 	private string p_chatName;
 	private uint p_roomSize = 6;
@@ -14,6 +14,7 @@ public class LobbyCenter : MonoBehaviour {
 
 	private List<GameObject> p_chatList = new List<GameObject> ();
 	[SerializeField] private GameObject i_chatListItemPrefab;
+	[SerializeField] private GameObject i_chatListTextPrefab;
 	[SerializeField] private Transform i_chatListParent;
 
 	public string g_searchingName;
@@ -25,6 +26,13 @@ public class LobbyCenter : MonoBehaviour {
 			p_networkManager.StartMatchMaker();
 		}
 		RefreshChatList ();
+	}
+
+	void showErrorOnChatList(string l_errorText){
+		ClearChatList ();
+		GameObject chatText = Instantiate (i_chatListTextPrefab, i_chatListParent);
+		chatText.GetComponent<ChatListText> ().setText (l_errorText);
+		p_chatList.Add (chatText);
 	}
 
 	#endregion
@@ -64,7 +72,12 @@ public class LobbyCenter : MonoBehaviour {
 
 	void OnMatchList(bool success, string extendedInfo, List<MatchInfoSnapshot> matchList){
 		if (!success || matchList == null) {
-			Debug.Log ("Cant get chatRooms");
+			showErrorOnChatList ("Cant get rooms!");
+			return;
+		}
+
+		if (matchList.Count < 1) {
+			showErrorOnChatList ("No chats at this moment!");
 			return;
 		}
 
@@ -85,11 +98,11 @@ public class LobbyCenter : MonoBehaviour {
 
 	IEnumerator waitForJoin(int l_waitCounter){
 		while (l_waitCounter > 0) {
+			showErrorOnChatList ("Joining...");
 			yield return new WaitForSeconds (1f);
 			l_waitCounter--;
 		}
-
-		Debug.Log ("Cant connect!");
+		showErrorOnChatList ("Cant connect, refreshing chats...");
 		yield return new WaitForSeconds (1f);
 
 		MatchInfo matchInfo = p_networkManager.matchInfo;
@@ -97,7 +110,7 @@ public class LobbyCenter : MonoBehaviour {
 			p_networkManager.matchMaker.DropConnection (matchInfo.networkId, matchInfo.nodeId, 0, p_networkManager.OnDropConnection);
 			p_networkManager.StopHost ();
 		}
-
+		yield return new WaitForSeconds (2f);
 		RefreshChatList ();
 	}
 
@@ -113,17 +126,21 @@ public class LobbyCenter : MonoBehaviour {
 		if (p_networkManager.matchMaker == null) {
 			p_networkManager.StartMatchMaker ();
 		}
-		Debug.Log ("Searching for room : " + g_searchingName);
+		showErrorOnChatList ("Searching for room : " + g_searchingName);
 		p_networkManager.matchMaker.ListMatches (0, 20, g_searchingName, true, 0, 0, OnMatchSearch);
 	}
 
 	void OnMatchSearch(bool success, string extendedInfo, List<MatchInfoSnapshot> matchList){
 		if (!success || matchList == null) {
-			Debug.Log ("Cant get chatRooms");
+			showErrorOnChatList ("Cant get chatRooms");
 			return;
 		}
-		Debug.Log ("Pokój znaleziony : " + matchList [0].name);
-		Debug.Log ("Pokoi znalezionych : " + matchList.Count);
+
+		if (matchList.Count < 1) {
+			showErrorOnChatList ("Cant find Chat!");
+			return;
+		}
+
 		joinRoom (matchList [0], 15);
 	}
 
