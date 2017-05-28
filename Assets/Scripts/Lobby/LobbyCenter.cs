@@ -16,6 +16,8 @@ public class LobbyCenter : MonoBehaviour {
 	[SerializeField] private GameObject i_chatListItemPrefab;
 	[SerializeField] private Transform i_chatListParent;
 
+	public string g_searchingName;
+
 	void Start () {
 		p_networkManager = NetworkManager.singleton;
 		if (p_networkManager.matchMaker == null)
@@ -68,7 +70,7 @@ public class LobbyCenter : MonoBehaviour {
 
 		foreach (MatchInfoSnapshot match in matchList) {
 			GameObject chatItem = Instantiate (i_chatListItemPrefab, i_chatListParent);
-			chatItem.GetComponent<ChatListItem> ().Setup (match, joinRoom);
+			chatItem.GetComponent<ChatListItem> ().Setup (match, joinRoom, 10);
 			p_chatList.Add (chatItem);
 		}
 	}
@@ -76,13 +78,12 @@ public class LobbyCenter : MonoBehaviour {
 
 	#region joining : 
 
-	void joinRoom(MatchInfoSnapshot match){
+	void joinRoom(MatchInfoSnapshot match, int seconds){
 		p_networkManager.matchMaker.JoinMatch (match.networkId, "", "", "", 0, 0, p_networkManager.OnMatchJoined);
-		StartCoroutine (waitForJoin ());
+		StartCoroutine (waitForJoin (seconds));
 	}
 
-	IEnumerator waitForJoin(){
-		int l_waitCounter = 10;
+	IEnumerator waitForJoin(int l_waitCounter){
 		while (l_waitCounter > 0) {
 			yield return new WaitForSeconds (1f);
 			l_waitCounter--;
@@ -98,6 +99,40 @@ public class LobbyCenter : MonoBehaviour {
 		}
 
 		RefreshChatList ();
+	}
+
+	#endregion
+
+	#region Finding chat by name and connecting to it : 
+
+	public void SetSearchName(string _input){
+		g_searchingName = _input;
+	}
+
+	public void SearchForChat(){
+		if (p_networkManager.matchMaker == null) {
+			p_networkManager.StartMatchMaker ();
+		}
+		Debug.Log ("Searching for room : " + g_searchingName);
+		p_networkManager.matchMaker.ListMatches (0, 20, g_searchingName, true, 0, 0, OnMatchSearch);
+	}
+
+	void OnMatchSearch(bool success, string extendedInfo, List<MatchInfoSnapshot> matchList){
+		if (!success || matchList == null) {
+			Debug.Log ("Cant get chatRooms");
+			return;
+		}
+		Debug.Log ("Pokój znaleziony : " + matchList [0].name);
+		Debug.Log ("Pokoi znalezionych : " + matchList.Count);
+		joinRoom (matchList [0], 15);
+	}
+
+	#endregion
+
+	#region Quiting :
+
+	public void Quit_ButtonClick(){
+		Application.Quit ();
 	}
 
 	#endregion
