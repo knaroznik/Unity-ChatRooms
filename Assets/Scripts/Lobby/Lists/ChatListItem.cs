@@ -18,7 +18,9 @@ public class ChatListItem : MonoBehaviour {
 	}
 
 	public void Button_Click(){
-		p_joinDelegate.Invoke (p_matchInfo, p_seconds);
+		if (!UserAccount.isDefault()) {
+			p_joinDelegate.Invoke (p_matchInfo, p_seconds);
+		}
 	}
 }
 

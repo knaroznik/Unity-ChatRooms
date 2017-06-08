@@ -24,7 +24,7 @@ public class NetworkUser : NetworkBehaviour {
 
 		if (Input.GetKeyDown (KeyCode.Return)) {
 			if (chatInputField.text != "") {
-				CmdWrite (chatInputField.text, UserAccount.Username);
+				CmdWrite (chatInputField.text, UserAccount.GetUserName());
 				chatInputField.text = "";
 			}
 		}

@@ -11,28 +11,30 @@ public class LobbyCenter : MonoBehaviour {
 	private string p_chatName;
 	private uint p_roomSize = 6;
 	private NetworkManager p_networkManager;
-
 	private List<GameObject> p_chatList = new List<GameObject> ();
+	private Transform p_chatListParent;
+	private string p_searchingName;
+
 	[SerializeField] private GameObject i_chatListItemPrefab;
 	[SerializeField] private GameObject i_chatListTextPrefab;
-	[SerializeField] private Transform i_chatListParent;
-
-	public string g_searchingName;
 
 	void Start () {
+		UserAccount.defaultUserName ();
 		p_networkManager = NetworkManager.singleton;
-		if (p_networkManager.matchMaker == null)
-		{
-			p_networkManager.StartMatchMaker();
+		if (p_networkManager.matchMaker == null) {
+			p_networkManager.StartMatchMaker ();
 		}
-		RefreshChatList ();
 	}
 
 	void showErrorOnChatList(string l_errorText){
 		ClearChatList ();
-		GameObject chatText = Instantiate (i_chatListTextPrefab, i_chatListParent);
+		GameObject chatText = Instantiate (i_chatListTextPrefab, p_chatListParent);
 		chatText.GetComponent<ChatListText> ().setText (l_errorText);
 		p_chatList.Add (chatText);
+	}
+
+	public void setchatListParent(Transform l_newParent){
+		p_chatListParent = l_newParent;
 	}
 
 	#endregion
@@ -82,7 +84,7 @@ public class LobbyCenter : MonoBehaviour {
 		}
 
 		foreach (MatchInfoSnapshot match in matchList) {
-			GameObject chatItem = Instantiate (i_chatListItemPrefab, i_chatListParent);
+			GameObject chatItem = Instantiate (i_chatListItemPrefab, p_chatListParent);
 			chatItem.GetComponent<ChatListItem> ().Setup (match, joinRoom, 10);
 			p_chatList.Add (chatItem);
 		}
@@ -98,7 +100,7 @@ public class LobbyCenter : MonoBehaviour {
 
 	IEnumerator waitForJoin(int l_waitCounter){
 		while (l_waitCounter > 0) {
-			showErrorOnChatList ("Joining...");
+			showErrorOnChatList ("Joining... (" + l_waitCounter + ")");
 			yield return new WaitForSeconds (1f);
 			l_waitCounter--;
 		}
@@ -108,7 +110,7 @@ public class LobbyCenter : MonoBehaviour {
 		MatchInfo matchInfo = p_networkManager.matchInfo;
 		if (matchInfo != null) {
 			p_networkManager.matchMaker.DropConnection (matchInfo.networkId, matchInfo.nodeId, 0, p_networkManager.OnDropConnection);
-			p_networkManager.StopHost ();
+			p_networkManager.StopClient ();
 		}
 		yield return new WaitForSeconds (2f);
 		RefreshChatList ();
@@ -119,15 +121,15 @@ public class LobbyCenter : MonoBehaviour {
 	#region Finding chat by name and connecting to it : 
 
 	public void SetSearchName(string _input){
-		g_searchingName = _input;
+		p_searchingName = _input;
 	}
 
 	public void SearchForChat(){
 		if (p_networkManager.matchMaker == null) {
 			p_networkManager.StartMatchMaker ();
 		}
-		showErrorOnChatList ("Searching for room : " + g_searchingName);
-		p_networkManager.matchMaker.ListMatches (0, 20, g_searchingName, true, 0, 0, OnMatchSearch);
+		showErrorOnChatList ("Searching for room : " + p_searchingName);
+		p_networkManager.matchMaker.ListMatches (0, 20, p_searchingName, true, 0, 0, OnMatchSearch);
 	}
 
 	void OnMatchSearch(bool success, string extendedInfo, List<MatchInfoSnapshot> matchList){
