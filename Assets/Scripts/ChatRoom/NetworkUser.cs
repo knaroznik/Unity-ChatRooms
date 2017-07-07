@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class NetworkUser : NetworkBehaviour {
 
@@ -10,10 +11,12 @@ public class NetworkUser : NetworkBehaviour {
 
 	private InputField p_chatInputField;
 	private ChatText p_chatModel;
+	private EventSystem system;
 
 	void Start(){
 		p_chatInputField = GameObject.FindGameObjectWithTag ("GameController").GetComponent<InputField> ();
 		p_chatModel = FindObjectOfType<ChatText> ();
+		system = EventSystem.current;
 	}
 		
 	void Update(){
@@ -24,6 +27,8 @@ public class NetworkUser : NetworkBehaviour {
 			if (p_chatInputField.text != "") {
 				CmdWrite (p_chatInputField.text, UserAccount.GetUserName());
 				p_chatInputField.text = "";
+				//TODO : Selecting InputField.
+				EventSystem.current.SetSelectedGameObject (p_chatInputField.gameObject, new BaseEventData(system));
 			}
 		}
 	}
@@ -72,7 +77,7 @@ public class NetworkUser : NetworkBehaviour {
 
 	[ClientRpc]
 	public void RpcDeleteDisconnectedUser(string l_input){
-		p_chatModel.DeleteDisconnecteduser (l_input);
+		p_chatModel.DeleteDisconnectedUser (l_input);
 		p_chatModel.AddToChat (l_input + " has left");
 	}
 
