@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class ChatText : NetworkBehaviour {
 
 	private ChatRoomMaster controller;
-
 
 	[SyncVar] private string p_chatText;
 
@@ -57,9 +57,16 @@ public class ChatText : NetworkBehaviour {
 		saveSyncVar();
 	}
 
-	//TODO
 	void changeNames(){
-		
+		var keys = new List<string>(p_RoomUsers.Keys);
+		var values = new List<GameObject>(p_RoomUsers.Values);
+		for (int i = 0; i < p_RoomUsers.Count; i++) {
+			changeName (values[i], keys[i]);
+		}
+	}
+
+	void changeName(GameObject l_roomUserObject, string l_roomUserName){
+		l_roomUserObject.transform.GetChild (1).GetComponent<Text> ().text = l_roomUserName;
 	}
 
 	void saveSyncVar(){

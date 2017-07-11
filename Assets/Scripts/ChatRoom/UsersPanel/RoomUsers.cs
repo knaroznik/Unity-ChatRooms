@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class RoomUsers : MonoBehaviour {
+	
+	//TODO : all numbers in variables.
 
 	private bool p_isExpanded = false;
 
