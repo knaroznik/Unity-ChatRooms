@@ -15,10 +15,15 @@ public class LobbyCenter : MonoBehaviour {
 	private Transform p_chatListParent;
 	private string p_searchingName;
 
+	private RoomConnection roomConnection;
+
 	[SerializeField] private GameObject i_chatListItemPrefab;
 	[SerializeField] private GameObject i_chatListTextPrefab;
 
 	void Start () {
+		
+		roomConnection = new RoomConnection ();
+
 		UserAccount.defaultUserName ();
 		p_networkManager = NetworkManager.singleton;
 		if (p_networkManager.matchMaker == null) {
@@ -46,12 +51,10 @@ public class LobbyCenter : MonoBehaviour {
 	}
 
 	public void CreateRoom (){
-		if (p_chatName != "" && p_chatName != null) {
-			p_networkManager.matchMaker.CreateMatch (p_chatName, p_roomSize, 
-				true, "", "", "", 0, 0, p_networkManager.OnMatchCreate);
-		}
+		StartCoroutine (roomConnection.CreateRoom (p_chatName, p_networkManager, p_roomSize));
 	}
 
+		
 	#endregion
 
 	#region All chat list : 
@@ -89,6 +92,8 @@ public class LobbyCenter : MonoBehaviour {
 			p_chatList.Add (chatItem);
 		}
 	}
+
+
 	#endregion
 
 	#region joining : 
