@@ -15,9 +15,11 @@ public class RoomConnection {
 
 			yield return networkManager.matchMaker.ListMatches (0, 20, "", true, 0, 0, OnCreationList);
 
-			if(g_canCreate){
+			if (g_canCreate) {
 				networkManager.matchMaker.CreateMatch (chatName, roomSize, 
 					true, "", "", "", 0, 0, networkManager.OnMatchCreate);
+			} else {
+				DebugPanel.GetInstance ().Report ("Room with this name already exists!");
 			}
 		}
 	}
