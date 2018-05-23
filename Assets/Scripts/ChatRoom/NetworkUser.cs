@@ -63,7 +63,7 @@ public class NetworkUser : NetworkBehaviour {
 	[ClientRpc]
 	void RpcShowUser(string l_userName){
 		p_chatModel.AddActiveUser (l_userName);
-		p_chatModel.AddToChat (l_userName + " joined the room");
+		p_chatModel.AddToChat ("<color=#a52a2aff>" + l_userName + " joined the room </color>");
 		this.gameObject.name = l_userName;
 	}
 
