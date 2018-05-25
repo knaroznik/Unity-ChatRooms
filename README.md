@@ -11,3 +11,6 @@ additional feature in every multiplayer game.
 
 # TODO 
 * Remove all transforms from code (challenge).
+* Silencing somebody
+* Emotes
+* Bbcodes
