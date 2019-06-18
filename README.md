@@ -14,3 +14,6 @@ additional feature in every multiplayer game.
 * Silencing somebody
 * Emotes
 * Bbcodes
+* TimeOut message
+* Update to Unity 2018.3 and next
+* Update visuals
