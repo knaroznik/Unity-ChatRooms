@@ -1,6 +1,8 @@
 # Unity-ChatRooms
 Goal of this application is to learn a bit more of networking in Unity and provide a chance to chat with another people in this.
 
+## Remember this will NOT WORK after Unity 2018, because Unity team is updating UNET. If i got time and knowledge how it shoud be updated i will change for new UNET.
+
 # Why?
 I want to learn more about Networking in Unity, so i'm doing this simple application which i hope will be good 
 additional feature in every multiplayer game.
