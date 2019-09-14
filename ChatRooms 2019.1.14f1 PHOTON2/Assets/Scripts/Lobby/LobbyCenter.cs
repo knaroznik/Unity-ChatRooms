@@ -9,7 +9,7 @@ public class LobbyCenter : MonoBehaviourPunCallbacks
 
     public Text ServerStatusText;
 
-    #region PHOTON2
+    #region PHOTON2 - move
     void Start()
     {
         PhotonNetwork.ConnectUsingSettings();

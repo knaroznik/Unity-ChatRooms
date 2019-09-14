@@ -31,5 +31,7 @@ MonoBehaviour:
   RpcList:
   - ClickRpc
   - DestroyRpc
+  - SetAll
+  - Write
   DisableAutoOpenWizard: 1
   ShowSettings: 1
