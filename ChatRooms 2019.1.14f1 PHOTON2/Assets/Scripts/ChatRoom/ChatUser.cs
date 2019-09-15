@@ -9,16 +9,19 @@ public class ChatUser : MonoBehaviourPunCallbacks
 
     private Text chatText;
 
-    public void Init(Text _chatText)
+    public void Start()
     {
-        chatText = _chatText;
-        photonView.RPC("Write", RpcTarget.All, "<color=#a52a2aff> new User joined the room </color>");
+        if (photonView.IsMine)
+        {
+            photonView.RPC("Write", RpcTarget.All, "<color=#a52a2aff>" + UserAccount.GetUserName() + " joined the room </color>");
+        }
     }
 
     [PunRPC]
     void Write(string message)
     {
-        chatText.text += message;
+        Chat.Instance.Write(message);
+        
 
     }
 }

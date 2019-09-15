@@ -1010,7 +1010,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1500332380291403666}
-        m_MethodName: SetUserName
+        m_MethodName: SetUserNameGlobal
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -7,52 +7,38 @@ using UnityEngine.UI;
 public class LobbyCenter : MonoBehaviourPunCallbacks
 {
 
-    public Text ServerStatusText;
+    private string p_chatName;
 
-    #region PHOTON2 - move
-    void Start()
-    {
-        PhotonNetwork.ConnectUsingSettings();
-        ServerStatusText.text = "Searching...";
-    }
-
-    public override void OnConnectedToMaster() //Callback function for when the first connection is established successfully.
-    {
-        ServerStatusText.text = "Connected to : " + PhotonNetwork.CloudRegion;
-        PhotonNetwork.AutomaticallySyncScene = true;
-    }
-
-    public override void OnCreateRoomFailed(short returnCode, string message) //callback function for if we fail to create a room. Most likely fail because room name was taken.
-    {
-        Debug.Log("Failed to create room... name exists already!");
-
-    }
-
-    public override void OnEnable()
-    {
-        PhotonNetwork.AddCallbackTarget(this);
-    }
-    public override void OnDisable()
-    {
-        PhotonNetwork.RemoveCallbackTarget(this);
-    }
-    public override void OnJoinedRoom() //Callback function for when we successfully create or join a room.
-    {
-        StartGame();
-    }
-    private void StartGame() //Function for loading into the multiplayer scene.
-    {
-        if (PhotonNetwork.IsMasterClient)
+    public string ChatName {
+        get
         {
-            PhotonNetwork.LoadLevel("ChatRoom"); //because of AutoSyncScene all players who join the room will also be loaded into the multiplayer scene.
+            return p_chatName;
+        }
+
+        set
+        {
+            p_chatName = value;
         }
     }
 
-    #endregion
+
+    public void CreateRoom()
+    {
+        if (PhotonNetwork.IsConnectedAndReady)
+        {
+            RoomOptions options = new RoomOptions() { IsVisible = true, IsOpen = true, MaxPlayers = (byte)p_roomSize };
+            PhotonNetwork.CreateRoom(ChatName, options);
+        }
+    }
+
+    public void JoinRoom()
+    {
+        PhotonNetwork.JoinRoom(ChatName);
+    }
 
     #region Variables and class Functions : 
 
-    private string p_chatName;
+    
 	private uint p_roomSize = 6;
 	private List<GameObject> p_chatList = new List<GameObject> ();
 	private Transform p_chatListParent;
@@ -75,24 +61,6 @@ public class LobbyCenter : MonoBehaviourPunCallbacks
 
 	#endregion
 
-	#region Create Chat :
-
-	public void SetChatName (string l_chatName){
-		p_chatName = l_chatName;
-	}
-
-	public void CreateRoom (){
-        if (PhotonNetwork.IsConnectedAndReady)
-        {
-            RoomOptions options = new RoomOptions() { IsVisible = true, IsOpen = true, MaxPlayers = (byte)p_roomSize };
-            PhotonNetwork.CreateRoom(p_chatName, options);
-        }
-    }
-
-    
-
-
-    #endregion
 
     #region All chat list : 
 
@@ -107,14 +75,6 @@ public class LobbyCenter : MonoBehaviourPunCallbacks
 		}
 	}
 
-
-	#endregion
-
-	#region joining : 
-
-	void joinRoom(){
-		
-	}
 
 	#endregion
 

@@ -11,15 +11,13 @@ public class ChatUserInit : MonoBehaviourPunCallbacks
     public string FolderName;
     public string PrefabName;
 
-    void Start()
+    void Awake()
     {
         CreatePlayer();
     }
 
     private void CreatePlayer()
     {
-        Debug.Log("Creating Player");
         GameObject localPlayer = PhotonNetwork.Instantiate(Path.Combine(FolderName, PrefabName), Vector3.zero, Quaternion.identity);
-        localPlayer.GetComponent<ChatUser>().Init(chatText);
     }
 }
